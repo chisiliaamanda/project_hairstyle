@@ -15,27 +15,29 @@ async function predictClassification(model, image) {
 
     // Face Shape Classes
     const faceShapes = ['Oval', 'Rectangular', 'Square', 'Round'];
-    const faceShapeResult = tf.argMax(prediction, 1).dataSync()[0];
-    const faseShapeLabel = faceShapes[faceShapeResult];
+    const faceShapeIndex = tf.argMax(prediction, 1).dataSync()[0];
+    const faceShape = faceShapes[faceShapeIndex];
+
+    const hairstyleImage = await getRecommendation(faceShape);
 
     // Define hairstyle classes
-    const hairstyles = ['Straight', 'Wavy', 'Curly'];
+    // const hairstyles = ['Straight', 'Wavy', 'Curly'];
 
-    // Map face shapes to recommended hairstyles (example mappings)
-    const hairstyleRecommendations = {
-      'Oval': ['Straight', 'Wavy', 'Curly'],
-      'Rectangular': ['Wavy', 'Curly'],
-      'Square': ['Wavy', 'Curly'],
-      'Round': ['Straight', 'Wavy'],
-    };
+    // // Map face shapes to recommended hairstyles (example mappings)
+    // const hairstyleRecommendations = {
+    //   'Oval': ['Straight', 'Wavy', 'Curly'],
+    //   'Rectangular': ['Wavy', 'Curly'],
+    //   'Square': ['Wavy', 'Curly'],
+    //   'Round': ['Straight', 'Wavy'],
+    // };
 
-    // Get a random hairstyle recommendation for the predicted face shape
-    const recommendedHairstyles = hairstyleRecommendations[faceShapeLabel];
-    const randomHairstyle = recommendedHairstyles[Math.floor(Math.random() * recommendedHairstyles.length)];
+    // // Get a random hairstyle recommendation for the predicted face shape
+    // const recommendedHairstyles = hairstyleRecommendations[faceShapeLabel];
+    // const randomHairstyle = recommendedHairstyles[Math.floor(Math.random() * recommendedHairstyles.length)];
 
-    const suggestion = `Based on your face shape (${faceShapeLabel}), we recommend the following hairstyle: ${randomHairstyle}.`;
+    // const suggestion = `Based on your face shape (${faceShapeLabel}), we recommend the following hairstyle: ${randomHairstyle}.`;
 
-    return { confidenceScore, label: faceShapeLabel, suggestion };
+    return { confidenceScore, faceShape, hairstyleImage };
   } catch (error) {
     throw new InputError('Error occurred during prediction.');
   }
