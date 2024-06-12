@@ -9,6 +9,9 @@ const routes = [
       payload: {
         allow: 'multipart/form-data', // Allow for image upload
         multipart: true,
+        output: 'data',  // This ensures the payload is parsed and available as a buffer
+        parse: true,
+        maxBytes: 10485760,  // Set a limit for the uploaded file size (e.g., 10MB)
       },
     },
   },

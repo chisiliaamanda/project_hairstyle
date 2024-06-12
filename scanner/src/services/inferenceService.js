@@ -1,5 +1,4 @@
 const tf = require('@tensorflow/tfjs-node');
-const { classifyFaceType } = require('./faceAndHairstyle'); // Face type classification
 const InputError = require('../exceptions/InputError');
 
 async function predictClassification(model, image) {
@@ -14,15 +13,29 @@ async function predictClassification(model, image) {
     const score = await prediction.data();
     const confidenceScore = Math.max(...score) * 100;
 
-    // Adapt class interpretation to face types (replace placeholders)
-    const classess = ['Oval', 'Round', 'Square', 'Heart', 'Oblong', 'Diamond'];
-    const classResult = tf.argMax(prediction, 1).dataSync()[0];
-    const label = classess[classResult];
+    // Face Shape Classes
+    const faceShapes = ['Oval', 'Rectangular', 'Square', 'Round'];
+    const faceShapeResult = tf.argMax(prediction, 1).dataSync()[0];
+    const faseShapeLabel = faceShapes[faceShapeResult];
 
-    // Hairstyle recommendation (replace with your implementation)
-    const hairstyleRecommendation = 'Hairstyle recommendation based on face type is not implemented yet.';
+    // Define hairstyle classes
+    const hairstyles = ['Straight', 'Wavy', 'Curly'];
 
-    return { confidenceScore, label, hairstyleRecommendation };
+    // Map face shapes to recommended hairstyles (example mappings)
+    const hairstyleRecommendations = {
+      'Oval': ['Straight', 'Wavy', 'Curly'],
+      'Rectangular': ['Wavy', 'Curly'],
+      'Square': ['Wavy', 'Curly'],
+      'Round': ['Straight', 'Wavy'],
+    };
+
+    // Get a random hairstyle recommendation for the predicted face shape
+    const recommendedHairstyles = hairstyleRecommendations[faceShapeLabel];
+    const randomHairstyle = recommendedHairstyles[Math.floor(Math.random() * recommendedHairstyles.length)];
+
+    const suggestion = `Based on your face shape (${faceShapeLabel}), we recommend the following hairstyle: ${randomHairstyle}.`;
+
+    return { confidenceScore, label: faceShapeLabel, suggestion };
   } catch (error) {
     throw new InputError('Error occurred during prediction.');
   }

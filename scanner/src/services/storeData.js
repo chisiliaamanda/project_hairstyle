@@ -1,37 +1,28 @@
-const { Pool } = require('mysql2/promise'); // Assuming you're using MySQL for Cloud SQL
+const { Pool } = require('pg');
+require('dotenv').config();
 
-// Replace with your Cloud SQL connection details
-const connectionConfig = {
-  host: 'your-cloud-sql-instance-hostname',
-  user: 'your-username',
-  password: 'your-password',
-  database: 'your-database-name',
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT,
+});
+
+const storePrediction = async (id, data) => {
+    const client = await pool.connect();
+    try {
+        const queryText = `INSERT INTO hairstyle_recommendations (id, hairstyle, suggestion, confidence_score, created_at)
+                           VALUES ($1, $2, $3, $4, $5)`;
+        const values = [id, data.hairstyle, data.suggestion, data.confidenceScore, data.createdAt];
+        await client.query(queryText, values);
+    } catch (err) {
+        console.error('Error storing hairstyle recommendation:', err);
+    } finally {
+        client.release();
+    }
 };
 
-async function storeData(data) {
-  const pool = await connectToCloudSql();
-  const query = `INSERT INTO predictions (id, data, created_at) VALUES (?, ?, ?)`;
-
-  try {
-    const [results] = await pool.execute(query, [data.id, JSON.stringify(data), data.createdAt]);
-    return results;
-  } catch (error) {
-    console.error('Error storing data in Cloud SQL:', error.message);
-    throw new Error('Failed to store prediction data.');
-  } finally {
-    // Close the connection pool (optional, but recommended for production)
-    pool.end();
-  }
-}
-
-async function connectToCloudSql() {
-  try {
-    const pool = new Pool(connectionConfig);
-    return pool;
-  } catch (error) {
-    console.error('Error connecting to Cloud SQL:', error.message);
-    throw new Error('Failed to connect to database.');
-  }
-}
-
-module.exports = storeData;
+module.exports = {
+    storePrediction
+};

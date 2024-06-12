@@ -3,7 +3,6 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const routes = require('../server/routes');
 const loadModel = require('../services/loadModel'); // Load face detection and feature extraction model
-const { classifyFaceType, createHairstyleRecommendation } = require('../services/faceAndHairstyle'); // Face type classification and hairstyle recommendation
 const InputError = require('../exceptions/InputError');
 
 (async () => {
@@ -18,43 +17,50 @@ const InputError = require('../exceptions/InputError');
   });
 
   // Load the face detection and feature extraction model
-  const model = await loadModel();
-  server.app.model = model;
+  try {
+    // Load the machine learning model
+    const model = await loadModel();
+    server.app.model = model; // Make the model available throughout the app
 
-  // Register routes for image prediction and history retrieval
-  server.route(routes);
+    // Register the routes
+    server.route(routes);
 
-  // Custom error handling middleware for InputError and Hapi Boom errors
-  server.ext('onPreResponse', async function (request, h) {
-    const response = request.response;
+    // Custom error handling
+    server.ext('onPreResponse', (request, h) => {
+      const response = request.response;
 
-    if (response instanceof InputError) {
-      const newResponse = h.response({
-        status: 'fail',
-        message: `${response.message}`,
-      });
-      newResponse.code(response.statusCode);
-      return newResponse;
-    }
-
-    if (response.isBoom) {
-      let message = response.message;
-
-      if (response.output.statusCode === 413) {
-        message = 'Payload content length greater than maximum allowed: 1000000';
+      if (response instanceof InputError) {
+        const newResponse = h.response({
+          status: 'fail',
+          message: `${response.message}`
+        });
+        newResponse.code(response.statusCode);
+        return newResponse;
       }
 
-      const newResponse = h.response({
-        status: 'fail',
-        message: message,
-      });
-      newResponse.code(response.output.statusCode);
-      return newResponse;
-    }
+      if (response.isBoom) {
+        let message = response.message;
 
-    return h.continue;
-  });
+        if (response.output.statusCode === 413) {
+          message = 'Payload content length greater than maximum allowed: 1000000';
+        }
 
-  await server.start();
-  console.log(`Server started at: ${server.info.uri}`);
+        const newResponse = h.response({
+          status: 'fail',
+          message: message
+        });
+        newResponse.code(response.output.statusCode);
+        return newResponse;
+      }
+
+      return h.continue;
+    });
+
+    // Start the server
+    await server.start();
+    console.log(`Server started at: ${server.info.uri}`);
+  } catch (error) {
+    console.error('Error starting server:', error);
+    process.exit(1); // Exit the process with an error code
+  }
 })();
