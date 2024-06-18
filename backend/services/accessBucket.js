@@ -1,11 +1,11 @@
-const { Storage } = require('@google-cloud/storage');
+import { Storage } from '@google-cloud/storage';
 const storage = new Storage({ projectId: 'hairstyle-tresstech' }); 
 
 const bucketName = 'model-hairstyle-ml';
 const folders = ['tipe_rambut/bald hair/', 'tipe_rambut/curly hair/', 'tipe_rambut/straight hair/', 'tipe_rambut/wavy hair/'];
-const hairstyles = {};
 
-async function getHairstyleUrls() {
+export async function getHairstyleUrls() {
+  const hairstyles = {};
   try {
     for (const folderName of folders) {
       const [files] = await storage.bucket(bucketName).getFiles({ prefix: folderName });
@@ -25,10 +25,9 @@ async function getHairstyleUrls() {
       });
     }
 
-    console.log(hairstyles);
+    return hairstyles;
   } catch (error) {
     console.error('Error fetching files from GCS:', error);
+    throw error;
   }
 }
-
-getHairstyleUrls();
