@@ -1,7 +1,7 @@
 import { Storage } from '@google-cloud/storage';
-const storage = new Storage({ projectId: 'hairstyle-tresstech' }); 
+const storage = new Storage({ projectId: 'capstone-hairstyle' }); 
 
-const bucketName = 'model-hairstyle-ml';
+const bucketName = 'model-hairstyle';
 const folders = ['tipe_rambut/bald hair/', 'tipe_rambut/curly hair/', 'tipe_rambut/straight hair/', 'tipe_rambut/wavy hair/'];
 
 export async function getHairstyleUrls() {
