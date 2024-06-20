@@ -14,14 +14,11 @@ Our Cloud Computing project is created with:
 * Cloud Storage
 
 ## The Steps 
-1. Creating Login and Registration Using JSON Web Tokens
-   - JSON Web Token Installation
-   - Create and Verify Token
-2. Creation of Backend Login and Registration Using Express.js
-   - Express.js installation
-   - Express Server Settings
-   - Create an Endpoint to Register
-   - Create an Endpoint to Login
+1. Clone the GitHub repository and follow the steps above:
+   ```
+   git clone https://github.com/chisiliaamanda/project_hairstyle.git
+   cd project_hairstyle
+   ```
 3. Deployment to Google Cloud using Cloud SQL, Cloud Storage, and Cloud Run
    - Set up Cloud SQL:
      * Create a Cloud SQL instance in Google Cloud Console.
@@ -34,3 +31,18 @@ Our Cloud Computing project is created with:
      * Dockerizing the Application
      * Build and Push Images
      * Deploy to Cloud Run
+   Here is the code to deploy the backend into google cloud run:
+   ```
+   gcloud builds submit \
+   --tag gcr.io/$GOOGLE_CLOUD_PROJECT/hair-project1234
+   ```
+   ```
+   gcloud run deploy hair-project1234 \
+   --image gcr.io/$GOOGLE_CLOUD_PROJECT/hair-project1234 \
+   --platform managed \
+   --region asia-southeast2 \
+   --allow-unauthenticated \
+   --max-instances=3 \
+   --port=5000 \
+   --service-account my-new-service-account@capstone-hairstyle.iam.gserviceaccount.com
+   ```
