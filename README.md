@@ -14,7 +14,7 @@ Our Cloud Computing project is created with:
 * Cloud Storage
 
 ## The Steps 
-1. Clone the GitHub repository and follow the steps above:
+1. Clone the GitHub repository in Cloud Shell and follow the steps below:
    ```
    git clone https://github.com/chisiliaamanda/project_hairstyle.git
    cd project_hairstyle
