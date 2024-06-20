@@ -31,6 +31,7 @@ Our Cloud Computing project is created with:
      * Dockerizing the Application
      * Build and Push Images
      * Deploy to Cloud Run
+       
    Here is the code to deploy the backend into google cloud run:
    ```
    gcloud builds submit \
