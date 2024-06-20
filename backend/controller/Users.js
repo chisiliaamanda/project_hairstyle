@@ -9,7 +9,7 @@ export const getUsers = async(req, res) => {
         });
         res.json(users);
     } catch (error) {
-        console.log(error);
+        return res.status(400).json({msg: error});
     }
 }
 
@@ -26,7 +26,7 @@ export const Register = async(req, res) => {
         });
         res.json({msg: "Register Berhasil"});
     } catch (error) {
-        console.log(error);
+    return res.status(400).json({msg: error});
     }
 }
 
@@ -60,7 +60,7 @@ export const Login = async(req, res) => {
         res.json({ accessToken });
 
     } catch (error) {
-        res.status(404).json({msg: "Email tidak ditemukan "});
+    return res.status(400).json({msg: error});
     }
 }
 
