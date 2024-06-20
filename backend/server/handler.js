@@ -1,4 +1,4 @@
-import { getHairstyleUrls } from '../services/getHairstyleUrlsService.js';
+import { getHairstyleUrls } from '../services/accessBucket.js';
 
 export async function getHairstyleUrlsHandler(req, res) {
   try {
